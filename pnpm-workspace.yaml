@@ -1,0 +1,7 @@
+packages:
+  - packages/*
+
+# A newly published version waits a day before it can be installed. A package that was
+# replaced upstream, by mistake or by an attacker, cannot enter the lockfile on the day it
+# appears. Value in minutes.
+minimumReleaseAge: 1440

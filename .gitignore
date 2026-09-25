@@ -1,0 +1,15 @@
+# macOS and editors
+.DS_Store
+._*
+.idea/
+.vscode/
+
+# Build output
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+
+# Environment files never enter the repository.
+.env
+.env.*

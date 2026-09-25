@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Propose a new package or an RWA engineering problem
+    url: https://github.com/globalmpc/rwa-engineering-problems/issues
+    about: New problems and package ideas are collected there, not here.

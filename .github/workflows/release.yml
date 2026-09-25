@@ -1,0 +1,68 @@
+# Publishes one package to npm when its release tag is pushed.
+#
+# Tag format: <package>-v<version>, for example evm-log-walker-v0.1.0. The version in the tag
+# must equal the version in packages/<package>/package.json, or the run stops before publishing.
+#
+# Authentication is npm trusted publishing: GitHub issues a short-lived OIDC token for this run,
+# npm accepts it, and provenance is attached to the release. No npm token exists in this
+# repository. Each package is configured on npmjs.com against this repository and this file
+# name, so the job only runs in the public repository.
+name: release
+
+on:
+  push:
+    tags:
+      - "*-v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish to npm
+    if: github.repository == 'globalmpc/rwa-kit-js'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # creates the GitHub Release
+      id-token: write   # OIDC token for npm trusted publishing
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Resolve package from tag
+        id: tag
+        run: |
+          name="${GITHUB_REF_NAME%-v*}"
+          version="${GITHUB_REF_NAME##*-v}"
+          test -f "packages/$name/package.json" || { echo "No package at packages/$name"; exit 1; }
+          declared=$(node -p "require('./packages/$name/package.json').version")
+          test "$declared" = "$version" || { echo "Tag says $version, package.json says $declared"; exit 1; }
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 10.33.0
+
+      # Trusted publishing needs npm 11.5.1 or newer, which Node 24 ships. CI runs the .nvmrc
+      # version because that is what users run; only the publish step needs the newer npm.
+      # No registry-url here: setup-node would then expect an auth token that does not exist.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck, test and build the package
+        run: pnpm --filter "./packages/${{ steps.tag.outputs.name }}" run check
+
+      # --provenance is implied by trusted publishing; passing it makes a misconfigured
+      # publisher fail here instead of publishing without provenance.
+      - name: Publish
+        working-directory: packages/${{ steps.tag.outputs.name }}
+        run: npm publish --access public --provenance
+
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --title "${{ steps.tag.outputs.name }} ${{ steps.tag.outputs.version }}" --generate-notes

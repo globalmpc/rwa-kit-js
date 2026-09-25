@@ -1,0 +1,44 @@
+# Actions are pinned to commit SHAs. A tag such as `@v4` can be moved to other code later; the
+# trailing comment is for readers only. Update a pin by changing the SHA so the change is in the diff.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Typecheck, tests, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          # Same value as packageManager in package.json. If they differ, pnpm installs itself
+          # again at the other version.
+          version: 10.33.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # Only production dependencies are audited: they are what a user installs with a package.
+      # High and above blocks; a rule with no threshold ends up ignored.
+      - name: Dependency vulnerability audit
+        run: pnpm audit --prod --audit-level high
+
+      - name: Typecheck, tests, build
+        run: pnpm check

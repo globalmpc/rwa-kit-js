@@ -1,0 +1,5 @@
+# Secret scan configuration for `.github/workflows/secrets.yml`. Default rules, no allowlist.
+# Before adding an allowlist entry, confirm the value is genuinely public.
+
+[extend]
+useDefault = true

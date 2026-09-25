@@ -1,0 +1,63 @@
+{
+  "name": "@globalmpc/evm-log-walker",
+  "version": "0.1.0",
+  "description": "Read contract event logs from BNB Chain and other EVM networks reliably: probe what an RPC endpoint allows, walk history in adaptive chunks, resume from a checkpoint, bucket logs by UTC day, and find a contract's creation block.",
+  "keywords": [
+    "evm",
+    "bnb-chain",
+    "bsc",
+    "opbnb",
+    "eth_getLogs",
+    "event-logs",
+    "indexer",
+    "creation-block",
+    "rwa"
+  ],
+  "license": "MIT",
+  "author": "Global MPC",
+  "homepage": "https://github.com/globalmpc/rwa-kit-js/tree/main/packages/evm-log-walker#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/globalmpc/rwa-kit-js.git",
+    "directory": "packages/evm-log-walker"
+  },
+  "bugs": {
+    "url": "https://github.com/globalmpc/rwa-kit-js/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "creation-block": "./dist/bin/creation-block.js"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "build": "node -e \"fs.rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "check": "pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "typescript": "5.9.3",
+    "vitest": "5.0.1"
+  }
+}
