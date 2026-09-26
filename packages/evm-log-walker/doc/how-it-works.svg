@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>How evm-log-walker reads history and finds a creation block</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#374151"/>
+    </marker>
+  </defs>
+  <rect width="900" height="400" fill="#ffffff"/>
+  <text x="24" y="36" font-size="18" font-weight="600" fill="#111827">Reading a contract's history: three calls and a callback, one Rpc</text>
+
+  <g font-size="14" fill="#374151">
+    <rect x="24" y="60" width="200" height="112" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="38" y="86" font-size="15" font-weight="600" fill="#1d4ed8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">probeRpc</text>
+    <text x="38" y="110">Ask what the endpoint</text>
+    <text x="38" y="128">allows: head, largest</text>
+    <text x="38" y="146">getLogs span, past state</text>
+
+    <line x1="224" y1="116" x2="238" y2="116" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="240" y="60" width="200" height="112" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="254" y="86" font-size="15" font-weight="600" fill="#1d4ed8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">walkLogs</text>
+    <text x="254" y="110">Chunks that adapt: halve</text>
+    <text x="254" y="128">when refused, grow back</text>
+    <text x="254" y="146">after 5 accepted calls</text>
+
+    <line x1="440" y1="116" x2="454" y2="116" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="456" y="60" width="200" height="112" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="470" y="86" font-size="15" font-weight="600" fill="#1d4ed8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">onCheckpoint</text>
+    <text x="470" y="110">{ nextBlock, toBlock }</text>
+    <text x="470" y="128">after each handled batch;</text>
+    <text x="470" y="146">resume there, skip none</text>
+
+    <line x1="656" y1="116" x2="670" y2="116" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="672" y="60" width="200" height="112" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="686" y="86" font-size="15" font-weight="600" fill="#1d4ed8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">groupByUtcDay</text>
+    <text x="686" y="110">Bucket by UTC day; two</text>
+    <text x="686" y="128">timestamp fetches per</text>
+    <text x="686" y="146">batch in the usual case</text>
+  </g>
+
+  <text x="24" y="218" font-size="18" font-weight="600" fill="#111827">Finding the block a contract was deployed in: findCreationBlock</text>
+
+  <g font-size="14" fill="#374151">
+    <rect x="24" y="240" width="270" height="96" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="40" y="266" font-size="15" font-weight="600" fill="#1d4ed8">1. Gallop back</text>
+    <text x="40" y="292">eth_getCode at head-1, -2, -4 ...</text>
+    <text x="40" y="312">until a block has no code</text>
+
+    <line x1="294" y1="288" x2="308" y2="288" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="314" y="240" width="270" height="96" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="330" y="266" font-size="15" font-weight="600" fill="#1d4ed8">2. Bisect the last stride</text>
+    <text x="330" y="292">about 2 x log2(age) probes in all;</text>
+    <text x="330" y="312">55 for one 123 million blocks old</text>
+
+    <line x1="584" y1="288" x2="598" y2="288" stroke="#374151" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="604" y="240" width="270" height="96" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="620" y="266" font-size="15" font-weight="600" fill="#1d4ed8">3. Verify by receipt</text>
+    <text x="620" y="292">confirmed when a receipt in that</text>
+    <text x="620" y="312">block names the address</text>
+  </g>
+
+  <text x="24" y="372" font-size="13" fill="#6b7280">findCreationBlock needs an endpoint with past state; public BNB Chain nodes refuse it, and the error says so.</text>
+</svg>

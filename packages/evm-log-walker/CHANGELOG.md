@@ -4,7 +4,13 @@ All notable changes to `@globalmpc/evm-log-walker` are recorded here. The format
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the package follows
 [Semantic Versioning](https://semver.org/).
 
-## [0.1.0] - 2026-09-23
+## [Unreleased]
+
+### Changed
+
+- README: a diagram of the reading pipeline and of the creation-block search, above the install line.
+
+## [0.1.0] - 2026-09-25
 
 First release.
 
@@ -42,4 +48,5 @@ First release.
 - Errors carry stable codes: `E_RPC`, `E_LOGS_UNAVAILABLE`, `E_NO_ARCHIVE_STATE`, `E_NO_CODE`,
   `E_INVALID_ARGUMENT`.
 
-[0.1.0]: https://github.com/globalmpc/rwa-kit-js/releases/tag/evm-log-walker-v0.1.0
+[Unreleased]: https://github.com/globalmpc/rwa-kit-js/commits/main
+[0.1.0]: https://www.npmjs.com/package/@globalmpc/evm-log-walker/v/0.1.0

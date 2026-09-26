@@ -6,7 +6,7 @@ Open-source npm packages for real-world-asset (RWA) and BNB Chain developers, pu
 
 | Package | What it does | npm |
 |---|---|---|
-| [`@globalmpc/evm-log-walker`](packages/evm-log-walker) | Reads contract event logs from BNB Chain and other EVM networks reliably: probes what an endpoint allows, walks history in adaptive chunks, resumes from a checkpoint, buckets logs by UTC day, and finds a contract's creation block (`creation-block` CLI). | first release pending |
+| [`@globalmpc/evm-log-walker`](packages/evm-log-walker) | Reads contract event logs from BNB Chain and other EVM networks reliably: probes what an endpoint allows, walks history in adaptive chunks, resumes from a checkpoint, buckets logs by UTC day, and finds a contract's creation block (`creation-block` CLI). | [![npm](https://img.shields.io/npm/v/%40globalmpc%2Fevm-log-walker)](https://www.npmjs.com/package/@globalmpc/evm-log-walker) |
 
 ## Layout
 
