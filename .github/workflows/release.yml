@@ -53,8 +53,10 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      # "{path}..." also selects the package's workspace dependencies, checked and built first, so
+      # a package that imports another one here compiles against its dist/.
       - name: Typecheck, test and build the package
-        run: pnpm --filter "./packages/${{ steps.tag.outputs.name }}" run check
+        run: pnpm --filter "{./packages/${{ steps.tag.outputs.name }}}..." run check
 
       # --provenance is implied by trusted publishing; passing it makes a misconfigured
       # publisher fail here instead of publishing without provenance.

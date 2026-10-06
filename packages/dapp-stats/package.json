@@ -1,0 +1,66 @@
+{
+  "name": "@globalmpc/dapp-stats",
+  "version": "0.1.0",
+  "description": "Compute a dApp's own activity numbers from chain data — daily transactions, active wallets, holders, return rate and the sponsored-vs-user-paid gas split — and publish them as dated JSON and a self-contained static page. Every figure carries the RPC source and block range it came from.",
+  "keywords": [
+    "evm",
+    "bnb-chain",
+    "bsc",
+    "dapp-analytics",
+    "on-chain-metrics",
+    "active-wallets",
+    "holders",
+    "retention",
+    "rwa"
+  ],
+  "license": "MIT",
+  "author": "Global MPC",
+  "homepage": "https://github.com/globalmpc/rwa-kit-js/tree/main/packages/dapp-stats#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/globalmpc/rwa-kit-js.git",
+    "directory": "packages/dapp-stats"
+  },
+  "bugs": {
+    "url": "https://github.com/globalmpc/rwa-kit-js/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "dapp-stats": "./dist/bin/dapp-stats.js"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "build": "node -e \"fs.rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "check": "pnpm typecheck && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "@globalmpc/evm-log-walker": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "typescript": "5.9.3",
+    "vitest": "5.0.1"
+  }
+}
