@@ -1,6 +1,26 @@
 # rwa-kit-js
 
-Open-source npm packages for real-world-asset (RWA) and BNB Chain developers, published under `@globalmpc`. One repository, one folder per package.
+Open-source npm packages for real-world-asset (RWA) and BNB Chain developers, published under `@globalmpc`. One repository, one folder per package. The packages read chain data from **BNB Smart Chain (BSC)** by default and work with other EVM networks.
+
+## Technology Stack
+
+- **Blockchain:** BNB Smart Chain (default), opBNB and other EVM-compatible chains, over HTTP JSON-RPC.
+- **Language:** TypeScript 5.9, Node.js 22.14+, ES modules.
+- **Development:** pnpm 10.33 workspace, Vitest.
+- **Dependencies:** none at runtime beyond `@globalmpc/evm-log-walker` (used by `dapp-stats`).
+
+## Supported Networks
+
+- **BNB Smart Chain Mainnet (Chain ID: 56)** — default network of the `dapp-stats` CLI (`--network bsc`).
+- **BNB Smart Chain Testnet (Chain ID: 97)** — `--network bsc --testnet`.
+- **opBNB Mainnet (Chain ID: 204)** — through your own endpoint (`--rpc`, or `createRpc` in code); `evm-log-walker` documents the limits of the public opBNB endpoints.
+- Polygon (137), Ethereum (1), Base (8453), Arbitrum One (42161) and Optimism (10), with their testnets — built-in public endpoints, see the [`dapp-stats` network table](packages/dapp-stats/README.md#choosing-a-network).
+
+The built-in endpoints are listed in [`packages/dapp-stats/src/cli/networks.ts`](packages/dapp-stats/src/cli/networks.ts).
+
+## Contract Addresses
+
+None. These packages read event logs and receipts from existing contracts; they deploy no contracts and hold no keys or funds.
 
 ## Packages
 
