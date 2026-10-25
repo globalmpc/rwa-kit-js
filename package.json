@@ -11,6 +11,7 @@
   "scripts": {
     "typecheck": "pnpm -r --if-present run typecheck",
     "test": "pnpm -r --if-present run test",
+    "coverage": "pnpm -r --if-present run coverage",
     "build": "pnpm -r --if-present run build",
     "check": "pnpm -r --if-present run check"
   },
