@@ -42,3 +42,7 @@ jobs:
 
       - name: Typecheck, tests, build
         run: pnpm check
+
+      # Only packages that define a "coverage" script run one; --if-present skips the rest.
+      - name: Coverage
+        run: pnpm coverage

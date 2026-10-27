@@ -1,5 +1,7 @@
 # rwa-kit-js
 
+Built by [MPC (Mineral Project Coin)](https://www.globalmpc.tech) — mining real-world asset (RWA) infrastructure.
+
 Open-source npm packages for real-world-asset (RWA) and BNB Chain developers, published under `@globalmpc`. One repository, one folder per package. The packages read chain data from **BNB Smart Chain (BSC)** by default and work with other EVM networks.
 
 ## Technology Stack
@@ -28,6 +30,7 @@ None. These packages read event logs and receipts from existing contracts; they 
 |---|---|---|
 | [`@globalmpc/evm-log-walker`](packages/evm-log-walker) | Reads contract event logs from BNB Chain and other EVM networks reliably: probes what an endpoint allows, walks history in adaptive chunks, resumes from a checkpoint, buckets logs by UTC day, and finds a contract's creation block (`creation-block` CLI). | [![npm](https://img.shields.io/npm/v/%40globalmpc%2Fevm-log-walker)](https://www.npmjs.com/package/@globalmpc/evm-log-walker) |
 | [`@globalmpc/dapp-stats`](packages/dapp-stats) | Computes a dApp's own activity numbers from chain data on top of `evm-log-walker`: daily transactions, unique active wallets, holders, 7-day and 30-day wallet return, and the sponsored-vs-user-paid gas split. Outputs dated JSON and a self-contained static page (`dapp-stats` CLI); every figure carries its RPC source and block range. | [![npm](https://img.shields.io/npm/v/%40globalmpc%2Fdapp-stats)](https://www.npmjs.com/package/@globalmpc/dapp-stats) |
+| [`@globalmpc/transfer-ledger`](packages/transfer-ledger) | Checks a bulk token payout against what was meant to be paid: reads every ERC-20 transfer by transaction hash and log index, so one multisend counts as many payments, and reports missing payments, duplicates and overpayments. Runs offline from a saved round; non-zero exit code when a round is not clean (`transfer-ledger` CLI). | [![npm](https://img.shields.io/npm/v/%40globalmpc%2Ftransfer-ledger)](https://www.npmjs.com/package/@globalmpc/transfer-ledger) |
 
 ## Layout
 
