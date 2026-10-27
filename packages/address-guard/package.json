@@ -1,0 +1,72 @@
+{
+  "name": "@globalmpc/address-guard",
+  "version": "0.1.0",
+  "description": "Catch address-poisoning look-alikes before you send. Derives the recipients you have really sent to from your own outgoing transfers, then flags a destination that shares the first and last 4 hex characters of one of them but differs in the middle, and checks the EIP-55 checksum. Runs offline in CI with a non-zero exit code.",
+  "keywords": [
+    "evm",
+    "bnb-chain",
+    "bsc",
+    "address-poisoning",
+    "eip55",
+    "checksum",
+    "lookalike",
+    "payouts",
+    "security",
+    "rwa"
+  ],
+  "license": "MIT",
+  "author": "Global MPC",
+  "homepage": "https://github.com/globalmpc/rwa-kit-js/tree/main/packages/address-guard#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/globalmpc/rwa-kit-js.git",
+    "directory": "packages/address-guard"
+  },
+  "bugs": {
+    "url": "https://github.com/globalmpc/rwa-kit-js/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "address-guard": "./dist/bin/address-guard.js"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "build": "node -e \"fs.rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "check": "pnpm typecheck && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "@globalmpc/evm-log-walker": "0.1.0",
+    "@noble/hashes": "2.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "@vitest/coverage-v8": "5.0.1",
+    "fast-check": "4.10.2",
+    "typescript": "5.9.3",
+    "viem": "2.57.10",
+    "vitest": "5.0.1"
+  }
+}

@@ -1,5 +1,7 @@
 # @globalmpc/dapp-stats
 
+Built by [MPC (Mineral Project Coin)](https://www.globalmpc.tech) — mining real-world asset (RWA) infrastructure.
+
 Compute a dApp's own activity numbers from chain data, and publish them so a reviewer can check the arithmetic instead of trusting it: daily transactions, unique active wallets, holders, 7-day and 30-day wallet return, and the sponsored-vs-user-paid gas split. Built on [`@globalmpc/evm-log-walker`](../evm-log-walker). Output is dated JSON plus a self-contained static page — no database, no hosted service, no runtime dependencies. Every number states the RPC endpoint and block range it came from.
 
 Two ways to use it, both first-class:

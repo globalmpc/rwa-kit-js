@@ -1,5 +1,7 @@
 # @globalmpc/evm-log-walker
 
+Built by [MPC (Mineral Project Coin)](https://www.globalmpc.tech) — mining real-world asset (RWA) infrastructure.
+
 Read contract event logs from BNB Chain and other EVM networks reliably, and find a contract's creation block.
 
 Every public endpoint answers `eth_getLogs` differently: one caps the block span, one caps the result count, one refuses log history outright, and none keeps past state. This package measures what an endpoint allows, walks history in chunks that adapt to the answer, checkpoints after every batch so a walk can resume, buckets logs by UTC day, and finds creation blocks with a receipt check. No runtime dependencies. Node 22.14 or newer (CI runs the current Node 22).
