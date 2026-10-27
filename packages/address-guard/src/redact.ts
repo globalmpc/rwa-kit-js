@@ -14,8 +14,8 @@
 /**
  * Shortest value treated as a credential.
  *
- * One floor for every URL component, including path segments. A previous revision gave paths a
- * higher floor on the grounds that they are "maybe routing", which left a five-character key in
+ * One floor for every URL component, including path segments. A higher floor for paths, on the
+ * grounds that they are "maybe routing", would leave a five-character key in
  * `https://rpc.example/abcde` unmasked — and the cost of being wrong is asymmetric: over-masking
  * makes a message less readable, under-masking puts a key in a CI log.
  *

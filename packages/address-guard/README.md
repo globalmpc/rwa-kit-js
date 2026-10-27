@@ -1,5 +1,7 @@
 # @globalmpc/address-guard
 
+Built by [MPC (Mineral Project Coin)](https://www.globalmpc.tech) — mining real-world asset (RWA) infrastructure.
+
 Catch address-poisoning look-alikes before you send.
 
 An attacker generates an address sharing the first and last few hex characters of one you really
@@ -207,9 +209,10 @@ implementation, **not reproduced against a specific deployed token**. A token th
 zero-value `transferFrom` would make that forgery impossible for that token — but the strict rule
 costs nothing there, so it is applied regardless and no token-specific behaviour is assumed.
 
-One line is uncovered by tests: the `txFrom === undefined` throw in `src/sources.ts`, which
-`transactionSenders` makes unreachable by throwing first. It is kept as a guard against a future
-refactor and is not hidden behind an ignore comment.
+One line is uncovered by tests: the "no transaction was resolved" throw in `toEvent` in
+`src/sources.ts`, which `transactionFacts` makes unreachable by throwing first for any transaction
+it cannot resolve. It is kept as a guard against a future refactor and is not hidden behind an
+ignore comment.
 
 `assessRecipient` judges a malformed candidate from its own shape before any history is fetched, so
 `invalid` and exit 30 do not depend on an endpoint being reachable.

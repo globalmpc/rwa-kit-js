@@ -8,7 +8,7 @@ export type Direction = "in" | "out";
  *
  * `counterparty` and `txFrom` are different things and the difference is the point of this
  * package: `counterparty` comes from the event's indexed topics, which anyone can make name any
- * account, while `txFrom` is the transaction's own sender. See NOTES.md and
+ * account, while `txFrom` is the transaction's own sender. See
  * `deriveTrustedRecipients`.
  */
 export interface HistoryEvent {

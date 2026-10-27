@@ -12,7 +12,7 @@ import type { Address, Hex } from "../src/hex.js";
  * So a look-alike can mint a log that reads as an outgoing send from the victim to itself. If the
  * log's `from` topic were enough to call something a trusted recipient, the attacker's address
  * would become trusted and every later check would wave it through — the precise failure this
- * package exists to prevent. These addresses are synthetic; see NOTES.md.
+ * package exists to prevent. These addresses are synthetic.
  */
 const OWNER = "0x1111111111111111111111111111111111111111" as Address;
 const ATTACKER = "0x2222222222222222222222222222222222222222" as Address;

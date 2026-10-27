@@ -13,8 +13,8 @@ export interface PayoutRow {
   rest?: string;
 }
 
-// Anchored at both ends: `\b` also matched a first row of "to review", dropping a malformed
-// recipient as though it were a header and letting the file pass without it being assessed.
+// Anchored at both ends: a `\b` match would also accept a first row of "to review", dropping a
+// malformed recipient as though it were a header and letting the file pass without it.
 const HEADER = /^(recipient|address|to)$/i;
 
 /**
