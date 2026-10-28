@@ -134,9 +134,8 @@ export function rpcLogSource(rpc: Rpc, options: RpcLogSourceOptions): HistorySou
       const endpoints = rpc.urls.map((url, index) => label(url, index));
       // kind is always "rpc" and `coverage` is never set. This source asks a node for a range and
       // reports what came back; it cannot establish that nothing was missed, so it must not claim
-      // to. A previous revision let callers label it "indexer", which made indexerThenRpc's
-      // completeness check compare the echoed query range against the requested range -- always
-      // equal, so always satisfied.
+      // to. Labelled "indexer", it would make indexerThenRpc's completeness check compare the
+      // echoed query range against the requested range -- always equal, so always satisfied.
       const source: SourceInfo = {
         kind: "rpc",
         endpoint: endpoints[0] ?? "",
