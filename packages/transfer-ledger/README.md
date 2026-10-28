@@ -1,5 +1,7 @@
 # @globalmpc/transfer-ledger
 
+Built by [MPC (Mineral Project Coin)](https://www.globalmpc.tech) — mining real-world asset (RWA) infrastructure.
+
 Check a bulk token payout against what was meant to be paid.
 
 One multisend transaction can carry hundreds of token transfers. Anything that records payments by transaction hash counts them as one payment, so a double payment and a missed one look the same from outside: the transaction succeeded. The only identity a transfer has is its transaction hash plus its position in that transaction's logs. This package reads every ERC-20 transfer that way, compares the result with your payout list, and reports missing payments, duplicates, overpayments, underpayments and payments to addresses the list does not name. It runs offline against a saved copy of the round, and its exit code is non-zero when a round is not clean, so it can gate a pipeline after every payout. Built on [`@globalmpc/evm-log-walker`](../evm-log-walker). Node 22.14 or newer (CI runs the current Node 22).

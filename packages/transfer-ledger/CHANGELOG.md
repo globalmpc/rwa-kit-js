@@ -6,6 +6,8 @@ All notable changes to `@globalmpc/transfer-ledger` are recorded here. The forma
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-28
+
 ### Added
 
 - `reconcile`: compares a payout list with the transfers the chain shows, one recipient at a time,
@@ -27,3 +29,4 @@ All notable changes to `@globalmpc/transfer-ledger` are recorded here. The forma
   for a keyed URL, from `TRANSFER_LEDGER_RPC`, and are reported by origin only.
 
 [Unreleased]: https://github.com/globalmpc/rwa-kit-js/commits/main
+[0.1.0]: https://www.npmjs.com/package/@globalmpc/transfer-ledger/v/0.1.0
