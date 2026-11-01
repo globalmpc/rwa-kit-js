@@ -1,6 +1,6 @@
 {
   "name": "@globalmpc/holder-snapshot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Who held a token at a given block, and what each holder is owed. Replays every ERC-20 Transfer since creation into balances, checks them against the token's own balanceOf and totalSupply, then splits a payout pool pro-rata or equally with exclusions, a minimum balance and a per-wallet cap. Writes a payout CSV that address-guard and transfer-ledger read.",
   "keywords": [
     "evm",
@@ -57,7 +57,7 @@
     "check": "pnpm typecheck && pnpm test && pnpm build"
   },
   "dependencies": {
-    "@globalmpc/evm-log-walker": "0.1.0"
+    "@globalmpc/evm-log-walker": "0.1.1"
   },
   "devDependencies": {
     "@types/node": "22.20.4",

@@ -6,9 +6,11 @@ All notable changes to `@globalmpc/evm-log-walker` are recorded here. The format
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-31
+
 ### Changed
 
-- README: a diagram of the reading pipeline and of the creation-block search, above the install line.
+- README: an animated walkthrough of how the package works, above the install line.
 
 ## [0.1.0] - 2026-09-25
 
@@ -49,4 +51,5 @@ First release.
   `E_INVALID_ARGUMENT`.
 
 [Unreleased]: https://github.com/globalmpc/rwa-kit-js/commits/main
+[0.1.1]: https://www.npmjs.com/package/@globalmpc/evm-log-walker/v/0.1.1
 [0.1.0]: https://www.npmjs.com/package/@globalmpc/evm-log-walker/v/0.1.0

@@ -1,6 +1,6 @@
 {
   "name": "@globalmpc/address-guard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Catch address-poisoning look-alikes before you send. Derives the recipients you have really sent to from your own outgoing transfers, then flags a destination that shares the first and last 4 hex characters of one of them but differs in the middle, and checks the EIP-55 checksum. Runs offline in CI with a non-zero exit code.",
   "keywords": [
     "evm",
@@ -58,7 +58,7 @@
     "check": "pnpm typecheck && pnpm test && pnpm build"
   },
   "dependencies": {
-    "@globalmpc/evm-log-walker": "0.1.0",
+    "@globalmpc/evm-log-walker": "0.1.1",
     "@noble/hashes": "2.4.0"
   },
   "devDependencies": {

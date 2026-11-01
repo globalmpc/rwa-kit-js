@@ -7,7 +7,7 @@ import type { Transfer } from "./transfers.js";
 
 // Bumped by hand alongside package.json's "version" at release time; recorded on every report so
 // a reader knows which rules produced it.
-const PACKAGE_VERSION = "0.1.0";
+const PACKAGE_VERSION = "0.1.1";
 
 /** An amount in a report: exact base units, plus the same value in token units for people. */
 export interface ReportAmount {

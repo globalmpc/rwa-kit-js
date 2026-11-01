@@ -9,6 +9,10 @@ Two ways to use it, both first-class:
 - **As a library**, `import { computeReport, renderPage } from "@globalmpc/dapp-stats"` inside your own app (a dashboard, a Slack bot, a scheduled job) — see [Quick start](#quick-start).
 - **As a standalone CLI**, `dapp-stats <address> --out ./activity` — see [Command line](#command-line). The CLI is a thin wrapper around the same two functions; it doesn't do anything you couldn't do yourself in code.
 
+### How it works
+
+![Animated walkthrough: eight steps showing the dapp-stats request, block range, Transfer log walk, UTC day grouping, holder replay, transaction receipts, return rate, and the published JSON and HTML page](doc/how-it-works.gif)
+
 ```sh
 npm install @globalmpc/dapp-stats
 ```

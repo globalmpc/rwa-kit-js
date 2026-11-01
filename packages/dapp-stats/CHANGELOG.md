@@ -6,6 +6,14 @@ All notable changes to `@globalmpc/dapp-stats` are recorded here. The format fol
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-31
+
+### Changed
+
+- README: an animated walkthrough of how the package works, above the install line.
+
+## [0.1.0] - 2026-10-06
+
 ### Added
 
 - `computeReport`: reads a token's `Transfer` logs and transactions over a block range and produces
@@ -49,3 +57,5 @@ All notable changes to `@globalmpc/dapp-stats` are recorded here. The format fol
   README open alongside the printed report to understand what a number means.
 
 [Unreleased]: https://github.com/globalmpc/rwa-kit-js/commits/main
+[0.1.1]: https://www.npmjs.com/package/@globalmpc/dapp-stats/v/0.1.1
+[0.1.0]: https://www.npmjs.com/package/@globalmpc/dapp-stats/v/0.1.0

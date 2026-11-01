@@ -13,6 +13,10 @@ This package derives your trusted recipients from your own outgoing sends, flags
 that imitates one of them, and verifies EIP-55 checksums. It is a library and a CLI, runs offline
 once the history is in hand, and exits non-zero in CI.
 
+### How it works
+
+![Animated walkthrough: seven steps showing the look-alike attack, reading your history, the five rules for a real send, comparing address ends, verdict order, gating a payout file, and what a verdict does not say](doc/how-it-works.gif)
+
 ```sh
 npm install @globalmpc/address-guard
 ```

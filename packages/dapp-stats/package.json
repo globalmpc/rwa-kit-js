@@ -1,6 +1,6 @@
 {
   "name": "@globalmpc/dapp-stats",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Compute a dApp's own activity numbers from chain data — daily transactions, active wallets, holders, return rate and the sponsored-vs-user-paid gas split — and publish them as dated JSON and a self-contained static page. Every figure carries the RPC source and block range it came from.",
   "keywords": [
     "evm",
@@ -56,7 +56,7 @@
     "check": "pnpm typecheck && pnpm test && pnpm build"
   },
   "dependencies": {
-    "@globalmpc/evm-log-walker": "0.1.0"
+    "@globalmpc/evm-log-walker": "0.1.1"
   },
   "devDependencies": {
     "@types/node": "22.20.4",

@@ -6,6 +6,10 @@ Who held a token at a given block, and what each holder is owed. Replays every E
 
 The use case is a dividend, yield or airdrop round: "split 10 000 USDT across holders of our token as of block 45 000 000, pro-rata, skip the treasury, the liquidity pool and anyone under 100 tokens." The usual alternative — a block-explorer export and a spreadsheet — has no check that the list is complete and no way to reproduce it later. This package does both.
 
+### How it works
+
+![Animated walkthrough: eight steps showing the request, confirming the creation block, replaying Transfer events, checking against the token, rechecking the file, applying the rules, splitting the pool, and writing the payout file](doc/how-it-works.gif)
+
 ```sh
 npm install @globalmpc/holder-snapshot
 ```
