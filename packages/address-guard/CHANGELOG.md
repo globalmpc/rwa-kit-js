@@ -6,6 +6,12 @@ All notable changes to `@globalmpc/address-guard` are recorded here. The format 
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-31
+
+### Changed
+
+- README: an animated walkthrough of how the package works, above the install line.
+
 ## [0.1.0] - 2026-10-27
 
 ### Added
@@ -77,4 +83,5 @@ All notable changes to `@globalmpc/address-guard` are recorded here. The format 
   `evidenceTruncated` when the cap applies.
 
 [Unreleased]: https://github.com/globalmpc/rwa-kit-js/commits/main
+[0.1.1]: https://www.npmjs.com/package/@globalmpc/address-guard/v/0.1.1
 [0.1.0]: https://www.npmjs.com/package/@globalmpc/address-guard/v/0.1.0

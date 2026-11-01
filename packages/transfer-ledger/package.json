@@ -1,6 +1,6 @@
 {
   "name": "@globalmpc/transfer-ledger",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Check a bulk token payout against what was meant to be paid. Reads every ERC-20 transfer by transaction hash and log index, so one multisend counts as hundreds of payments, and reports missing payments, duplicates and overpayments. Runs offline in CI, with a non-zero exit code when a round is not clean.",
   "keywords": [
     "evm",
@@ -56,7 +56,7 @@
     "check": "pnpm typecheck && pnpm test && pnpm build"
   },
   "dependencies": {
-    "@globalmpc/evm-log-walker": "0.1.0"
+    "@globalmpc/evm-log-walker": "0.1.1"
   },
   "devDependencies": {
     "@types/node": "22.20.4",

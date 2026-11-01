@@ -6,6 +6,12 @@ All notable changes to `@globalmpc/holder-snapshot` are recorded here. The forma
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-31
+
+### Changed
+
+- README: an animated walkthrough of how the package works, above the install line.
+
 ## [0.1.0] - 2026-10-27
 
 ### Added
@@ -60,4 +66,5 @@ All notable changes to `@globalmpc/holder-snapshot` are recorded here. The forma
   provider echoes back is masked.
 
 [Unreleased]: https://github.com/globalmpc/rwa-kit-js/commits/main
+[0.1.1]: https://www.npmjs.com/package/@globalmpc/holder-snapshot/v/0.1.1
 [0.1.0]: https://www.npmjs.com/package/@globalmpc/holder-snapshot/v/0.1.0

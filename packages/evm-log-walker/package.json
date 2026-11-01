@@ -1,6 +1,6 @@
 {
   "name": "@globalmpc/evm-log-walker",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read contract event logs from BNB Chain and other EVM networks reliably: probe what an RPC endpoint allows, walk history in adaptive chunks, resume from a checkpoint, bucket logs by UTC day, and find a contract's creation block.",
   "keywords": [
     "evm",

@@ -23,7 +23,7 @@ import { fetchTransactionSummaries, type TxSummary } from "./tx.js";
 
 // Bumped by hand alongside package.json's "version" at release time; recorded on every report so
 // a reader knows which computation rules produced it.
-const PACKAGE_VERSION = "0.1.0";
+const PACKAGE_VERSION = "0.1.1";
 
 // The longest lookback retention uses (`return30d`), so the earliest day it needs before the first
 // published day.
