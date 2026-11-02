@@ -1,0 +1,69 @@
+{
+  "name": "@globalmpc/hot-wallet-watch",
+  "version": "0.1.0",
+  "description": "Watch hot wallets for the signs of a takeover, block by block: an EIP-7702 delegation to a contract you did not approve, code appearing at the address, a nonce moving without your own send, and native or token outflows above a set rate. Every reading is cross-checked across independent RPC endpoints, and any one of them seeing trouble raises the alarm.",
+  "keywords": [
+    "evm",
+    "bnb-chain",
+    "bsc",
+    "eip-7702",
+    "hot-wallet",
+    "monitoring",
+    "incident-response",
+    "security",
+    "alerting",
+    "rwa"
+  ],
+  "license": "MIT",
+  "author": "Global MPC",
+  "homepage": "https://github.com/globalmpc/rwa-kit-js/tree/main/packages/hot-wallet-watch#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/globalmpc/rwa-kit-js.git",
+    "directory": "packages/hot-wallet-watch"
+  },
+  "bugs": {
+    "url": "https://github.com/globalmpc/rwa-kit-js/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "hot-wallet-watch": "./dist/bin/hot-wallet-watch.js"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "build": "node -e \"fs.rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "check": "pnpm typecheck && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "@globalmpc/evm-log-walker": "0.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "@vitest/coverage-v8": "5.0.1",
+    "typescript": "5.9.3",
+    "vitest": "5.0.1"
+  }
+}
