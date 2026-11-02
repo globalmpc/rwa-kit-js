@@ -1,0 +1,68 @@
+{
+  "name": "@globalmpc/sign-guard",
+  "version": "0.1.0",
+  "description": "A signing policy for hot wallets. Wraps a viem account so every transaction, EIP-7702 authorization, typed-data and message signature is checked against a written allowlist first: pinned chain ids, allowed contracts and functions, native and token spend caps per transaction and per time window, no blind hash signing. Anything the policy does not name is refused.",
+  "keywords": [
+    "evm",
+    "bnb-chain",
+    "bsc",
+    "eip-7702",
+    "hot-wallet",
+    "signing-policy",
+    "viem",
+    "spend-limit",
+    "security",
+    "rwa"
+  ],
+  "license": "MIT",
+  "author": "Global MPC",
+  "homepage": "https://github.com/globalmpc/rwa-kit-js/tree/main/packages/sign-guard#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/globalmpc/rwa-kit-js.git",
+    "directory": "packages/sign-guard"
+  },
+  "bugs": {
+    "url": "https://github.com/globalmpc/rwa-kit-js/issues"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "sign-guard": "./dist/bin/sign-guard.js"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "build": "node -e \"fs.rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "check": "pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.4",
+    "@vitest/coverage-v8": "5.0.1",
+    "fast-check": "4.10.2",
+    "typescript": "5.9.3",
+    "viem": "2.57.10",
+    "vitest": "5.0.1"
+  }
+}
