@@ -192,3 +192,7 @@ Tests run against an in-memory chain that refuses requests the way public BNB Ch
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+---
+
+Maintained by [Global MPC (Mineral Project Coin)](https://globalmpc.tech). $MPC remains at the Pre-TGE stage, and no token contract address has been published. Official site: https://globalmpc.tech
