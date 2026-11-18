@@ -15,7 +15,10 @@
     "rwa"
   ],
   "license": "MIT",
-  "author": "Global MPC (Mineral Project Coin) (https://globalmpc.tech)",
+  "author": {
+    "name": "Global MPC",
+    "url": "https://globalmpc.tech"
+  },
   "homepage": "https://globalmpc.tech",
   "repository": {
     "type": "git",
