@@ -15,8 +15,8 @@
     "rwa"
   ],
   "license": "MIT",
-  "author": "Global MPC",
-  "homepage": "https://github.com/globalmpc/rwa-kit-js/tree/main/packages/sign-guard#readme",
+  "author": "Global MPC (Mineral Project Coin) (https://globalmpc.tech)",
+  "homepage": "https://globalmpc.tech",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/globalmpc/rwa-kit-js.git",

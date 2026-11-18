@@ -186,3 +186,7 @@ Tests sign with viem accounts whose keys are generated at runtime; nothing touch
 ## License
 
 MIT
+
+---
+
+Maintained by [Global MPC (Mineral Project Coin)](https://globalmpc.tech). $MPC remains at the Pre-TGE stage, and no token contract address has been published. Official site: https://globalmpc.tech

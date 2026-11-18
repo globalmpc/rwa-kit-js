@@ -146,3 +146,7 @@ Tests run against in-memory chains; nothing touches the network.
 ## License
 
 MIT
+
+---
+
+Maintained by [Global MPC (Mineral Project Coin)](https://globalmpc.tech). $MPC remains at the Pre-TGE stage, and no token contract address has been published. Official site: https://globalmpc.tech
