@@ -75,15 +75,62 @@ describe("assessRecipient", () => {
 
   describe("verdict precedence", () => {
     /**
-     * A trusted address stays trusted when some other trusted address happens to share both
-     * ends with it. The resemblance is still reported, but it is not this address's problem --
-     * crying look-alike over a recipient the owner really pays is how a tool gets ignored.
+     * Two addresses the owner has really paid that share both ends are what an address-poisoning
+     * success looks like: someone copied the imitation from their history once, before the guard
+     * ran, and it has been trusted since. Neither can be cleared on its own, so both go to a
+     * person -- each one is judged against the other, so each gets the same verdict.
      */
-    it("keeps trusted when another trusted address resembles it", () => {
-      const result = assessRecipient(TRUSTED, { trusted: [TRUSTED, IMITATOR] });
+    it("sends both addresses of a trusted look-alike pair to review", () => {
+      const context = { trusted: [TRUSTED, IMITATOR] };
+      for (const address of [TRUSTED, IMITATOR]) {
+        const result = assessRecipient(address, context);
+        expect(result.verdict).toBe("review");
+        expect(result.reasons.join(" ")).toContain("really sent");
+        expect(result.reasons.join(" ")).toContain("a person must confirm");
+        expect(result.reasons.join(" ")).not.toContain("does not make this one suspect");
+      }
+      expect(assessRecipient(TRUSTED, context).evidence.map((m) => m.known)).toEqual([IMITATOR]);
+      expect(assessRecipient(IMITATOR, context).evidence.map((m) => m.known)).toEqual([TRUSTED]);
+    });
+
+    it("counts every trusted partner in the reason", () => {
+      const another = "0xabcd22222222222222222222222222222222abcd" as Address;
+      const result = assessRecipient(TRUSTED, { trusted: [TRUSTED, IMITATOR, another] });
+      expect(result.verdict).toBe("review");
+      expect(result.reasons.join(" ")).toContain("2 other address(es)");
+    });
+
+    it("keeps a trusted address trusted when nothing trusted resembles it", () => {
+      const result = assessRecipient(TRUSTED, { trusted: [TRUSTED, UNRELATED] });
       expect(result.verdict).toBe("trusted");
-      expect(result.evidence.map((m) => m.known)).toEqual([IMITATOR]);
-      expect(result.reasons.join(" ")).toContain("does not make this one suspect");
+      expect(result.evidence).toEqual([]);
+    });
+
+    /** A resemblance to another row of the same file says nothing about the owner's past. */
+    it("keeps a trusted address trusted when only a batch peer resembles it", () => {
+      const result = assessRecipient(TRUSTED, { trusted: [TRUSTED], peers: [IMITATOR] });
+      expect(result.verdict).toBe("trusted");
+      expect(result.evidence.map((m) => m.knownFrom)).toEqual(["batch"]);
+    });
+
+    it("reviews on a history partner even when a batch peer resembles it too", () => {
+      const peer = "0xabcd22222222222222222222222222222222abcd" as Address;
+      const result = assessRecipient(TRUSTED, { trusted: [TRUSTED, IMITATOR], peers: [peer] });
+      expect(result.verdict).toBe("review");
+      expect(result.reasons.join(" ")).toContain("1 other address(es)");
+    });
+
+    it("honours the prefix and suffix window when deciding what resembles", () => {
+      const narrow = "0xabcd11111111111111111111111111111111aacd" as Address;
+      expect(assessRecipient(TRUSTED, { trusted: [TRUSTED, narrow] }).verdict).toBe("trusted");
+      expect(assessRecipient(TRUSTED, { trusted: [TRUSTED, narrow], suffix: 2 }).verdict).toBe("review");
+    });
+
+    /** The checksum-mismatch path is unchanged: corrupt casing still beats an exact match. */
+    it("leaves the corrupt-casing path as it was for a trusted pair member", () => {
+      const result = assessRecipient(flipFirstLetterCase(toChecksum(TRUSTED)), { trusted: [TRUSTED, IMITATOR] });
+      expect(result.verdict).toBe("lookalike");
+      expect(result.checksum).toBe("mismatch");
     });
 
     /** Correct bytes, corrupt casing: safe to send, but the input was edited by hand. */
