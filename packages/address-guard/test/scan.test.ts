@@ -76,24 +76,53 @@ describe("scan names the log's claim, not a sender", () => {
   });
 });
 
-describe("scan does not report a trusted address as a poisoner", () => {
+describe("scan holds a pair of trusted addresses for review", () => {
   /**
-   * Two genuine recipients can share both ends by chance. scan called findLookalikes directly,
-   * bypassing assessRecipient's precedence, so an inbound transfer from either was reported as a
-   * look-alike of the other and the command exited 20.
+   * Two genuine recipients can share both ends by chance, or one may be a look-alike the owner paid
+   * before the guard existed. check says REVIEW for either, so scan must agree instead of saying
+   * the history is clean. It is not called a look-alike: neither half is known to be the fake.
    */
-  it("ignores an inbound transfer from an address the owner really pays", async () => {
-    const twinA = "0xaaaa000000000000000000000000000000001111" as Address;
-    const twinB = "0xaaaa999999999999999999999999999999991111" as Address;
-    const events = [
-      genuineSend(twinA),
-      genuineSend(twinB),
-      { ...genuineSend(twinA), direction: "in" as const, valueRaw: 1n, txFrom: twinA, blockNumber: 30n },
-    ];
-    const context = io({ source: () => mockSource(events) });
+  const twinA = "0xaaaa000000000000000000000000000000001111" as Address;
+  const twinB = "0xaaaa999999999999999999999999999999991111" as Address;
+  const pairHistory = [
+    genuineSend(twinA),
+    genuineSend(twinB),
+    { ...genuineSend(twinA), direction: "in" as const, valueRaw: 1n, txFrom: twinA, blockNumber: 30n },
+  ];
+
+  it("exits 15 for an inbound transfer from a paid address that has a paid partner", async () => {
+    const context = io({ source: () => mockSource(pairHistory) });
     const code = await runAddressGuard(["scan", OWNER, "--rpc", "https://r.example", "--token", TOKEN], context);
-    expect(code).toBe(EXIT.TRUSTED);
-    expect(context.out.join("\n")).toContain("No look-alike addresses");
+    expect(code).toBe(EXIT.REVIEW);
+    const text = context.out.join("\n");
+    expect(text).toContain(toChecksum(twinA));
+    expect(text).toContain(`shares both ends with ${toChecksum(twinB)}`);
+    expect(text).not.toContain("imitates");
+  });
+
+  it("agrees with check on the same history", async () => {
+    const checkCode = await runAddressGuard(["check", twinA, "--owner", OWNER, "--rpc", "https://r.example", "--token", TOKEN], io({ source: () => mockSource(pairHistory) }));
+    expect(checkCode).toBe(EXIT.REVIEW);
+  });
+
+  it("reports the review verdict in JSON", async () => {
+    const context = io({ source: () => mockSource(pairHistory) });
+    await runAddressGuard(["scan", OWNER, "--rpc", "https://r.example", "--token", TOKEN, "--json"], context);
+    const { findings } = JSON.parse(context.out.join("\n"));
+    expect(findings[0].verdict).toBe("review");
+  });
+
+  it("exits 20 when a look-alike is found as well", async () => {
+    const faker = "0xaaaa555555555555555555555555555555551111" as Address;
+    const events = [...pairHistory, { ...genuineSend(faker), direction: "in" as const, valueRaw: 0n, txFrom: faker, blockNumber: 40n }];
+    const context = io({ source: () => mockSource(events) });
+    expect(await runAddressGuard(["scan", OWNER, "--rpc", "https://r.example", "--token", TOKEN], context)).toBe(EXIT.LOOKALIKE);
+  });
+
+  it("stays clean for a paid address with no partner", async () => {
+    const events = [genuineSend(twinA), { ...genuineSend(twinA), direction: "in" as const, valueRaw: 1n, txFrom: twinA, blockNumber: 30n }];
+    const context = io({ source: () => mockSource(events) });
+    expect(await runAddressGuard(["scan", OWNER, "--rpc", "https://r.example", "--token", TOKEN], context)).toBe(EXIT.TRUSTED);
   });
 
   it("still flags an untrusted imitator of one of them", async () => {

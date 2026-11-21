@@ -29,14 +29,17 @@ export interface CliIo {
 export const ENDPOINT_VARIABLE = "ADDRESS_GUARD_RPC";
 
 /**
- * Exit codes. The verdict codes are spaced by ten so a caller can test a range, and the worst
- * verdict in a run decides the code: a clean batch with one look-alike exits 20.
+ * Exit codes. The worst verdict in a run decides the code: a clean batch with one look-alike exits
+ * 20. Most codes are spaced by ten so a caller can test a range, but REVIEW (15) is its own step
+ * between NEW and LOOKALIKE, not part of the 10 range: a script that stops only at 20 and above
+ * lets a review result through, so it should stop at 15 and above to hold trusted look-alike pairs.
  */
 export const EXIT = {
   TRUSTED: 0,
   USAGE: 1,
   FAILED: 2,
   NEW: 10,
+  REVIEW: 15,
   LOOKALIKE: 20,
   INVALID: 30,
 } as const;
@@ -48,8 +51,18 @@ export const EXIT = {
  */
 const EVIDENCE_LIMIT = 10;
 
+/**
+ * How to introduce an address listed as evidence. A look-alike imitates the address it lists. A
+ * review result lists the other half of a pair the owner has really paid, and neither half is known
+ * to be the fake, so it must not say the genuine address imitates anything.
+ */
+function evidenceLabel(verdict: Verdict): string {
+  return verdict === "review" ? "shares both ends with" : "imitates";
+}
+
 const VERDICT_EXIT: Record<Verdict, number> = {
   trusted: EXIT.TRUSTED,
+  review: EXIT.REVIEW,
   new: EXIT.NEW,
   lookalike: EXIT.LOOKALIKE,
   invalid: EXIT.INVALID,
@@ -93,8 +106,9 @@ Environment:
                     Put a keyed URL here: an argument is kept in shell history
                     and shown to other users in the process list.
 
-Exit codes: 0 trusted, 10 new, 20 look-alike, 30 invalid or bad checksum,
-1 usage error, 2 the history could not be read.
+Exit codes: 0 trusted, 10 new, 15 review (two trusted addresses look alike),
+20 look-alike, 30 invalid or bad checksum, 1 usage error, 2 the history could
+not be read.
 
 Every --json payload carries a "source" object naming the endpoint, by origin
 only, and the block range the answer was derived from. "checksum" needs no
@@ -233,7 +247,7 @@ async function runCheck(candidate: string | undefined, options: Options, io: Cli
   } else {
     io.stdout(`${assessment.verdict.toUpperCase()}  ${candidate}`);
     for (const reason of assessment.reasons) io.stdout(`  - ${reason}`);
-    for (const match of assessment.evidence) io.stdout(`  imitates ${toChecksum(match.known)}`);
+    for (const match of assessment.evidence) io.stdout(`  ${evidenceLabel(assessment.verdict)} ${toChecksum(match.known)}`);
     io.stdout(describe(source, trusted.length));
   }
   return VERDICT_EXIT[assessment.verdict];
@@ -272,13 +286,13 @@ async function runScan(owner: string | undefined, options: Options, io: CliIo): 
 
   const trustedSet = new Set(trusted);
   const findings = [...claimed.entries()]
-    // An address the owner really pays is not a poisoner, even when another trusted address
-    // happens to share both its ends. This mirrors assessRecipient's precedence, which scan
-    // bypasses by calling findLookalikes directly.
-    .filter(([address]) => !trustedSet.has(address))
     .map(([address, transfers]) => ({
       /** The address the log named. Not proof that it sent anything; compare with `txFrom`. */
       claimedBy: address,
+      // An address the owner really pays is not called a look-alike, but when another paid address
+      // shares both ends with it the pair is held for a person ("review"), the same as
+      // assessRecipient does, so scan and check give one answer for one history.
+      verdict: (trustedSet.has(address) ? "review" : "lookalike") as "review" | "lookalike",
       // Smallest first: the dust is the poisoning, and it should lead.
       transfers: [...transfers].sort((a, b) =>
         a.valueRaw === b.valueRaw ? Number(a.blockNumber - b.blockNumber) : a.valueRaw < b.valueRaw ? -1 : 1,
@@ -296,18 +310,20 @@ async function runScan(owner: string | undefined, options: Options, io: CliIo): 
     io.stdout(`No look-alike addresses found among ${claimed.size} inbound counterparty address(es).`);
     io.stdout(describe(source, trusted.length));
   } else {
-    io.stdout(`${findings.length} look-alike address(es) poisoning this history:`);
+    io.stdout(`${findings.length} address(es) in this history need attention:`);
     for (const finding of findings) {
-      io.stdout(`  ${toChecksum(finding.claimedBy)}  (named by the transfer log)`);
+      const note = finding.verdict === "review" ? "paid before; held for review" : "named by the transfer log";
+      io.stdout(`  ${toChecksum(finding.claimedBy)}  (${note})`);
       for (const transfer of finding.transfers) {
         io.stdout(`    ${transfer.valueRaw} at block ${transfer.blockNumber} in ${transfer.txHash}`);
         io.stdout(`      transaction signed by ${toChecksum(transfer.txFrom)}`);
       }
-      for (const match of finding.imitates) io.stdout(`    imitates ${toChecksum(match.known)}`);
+      for (const match of finding.imitates) io.stdout(`    ${evidenceLabel(finding.verdict)} ${toChecksum(match.known)}`);
     }
     io.stdout(describe(source, trusted.length));
   }
-  return findings.length > 0 ? EXIT.LOOKALIKE : EXIT.TRUSTED;
+  if (findings.some((finding) => finding.verdict === "lookalike")) return EXIT.LOOKALIKE;
+  return findings.length > 0 ? EXIT.REVIEW : EXIT.TRUSTED;
 }
 
 async function runPayouts(file: string | undefined, options: Options, io: CliIo): Promise<number> {
@@ -400,7 +416,7 @@ async function runPayouts(file: string | undefined, options: Options, io: CliIo)
   } else {
     for (const result of results) {
       io.stdout(`line ${result.line}  ${result.verdict.toUpperCase()}  ${result.candidate}`);
-      for (const match of result.evidence) io.stdout(`    imitates ${toChecksum(match.known)}`);
+      for (const match of result.evidence) io.stdout(`    ${evidenceLabel(result.verdict)} ${toChecksum(match.known)}`);
     }
     const counts = new Map<Verdict, number>();
     for (const result of results) counts.set(result.verdict, (counts.get(result.verdict) ?? 0) + 1);

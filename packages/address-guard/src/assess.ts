@@ -8,12 +8,15 @@ import { findLookalikes, type LookalikeMatch, type LookalikeOptions } from "./lo
  *
  * - `"trusted"` — the owner has really sent here before. Not a promise that it is safe; see the
  *   security note in the README.
+ * - `"review"` — the owner has really sent here before, but another address the owner has really
+ *   paid shares both ends with it. One of the pair may be a poisoned address that was paid before
+ *   this guard ran, so a person must check them; nothing here can say which.
  * - `"new"` — well-formed and unlike anything in the history. Normal for a first payment.
  * - `"lookalike"` — imitates a trusted address. Do not send.
  * - `"invalid"` — not a 20-byte hex address.
  * - `"bad-checksum"` — carries case information that contradicts its EIP-55 checksum.
  */
-export type Verdict = "trusted" | "new" | "lookalike" | "invalid" | "bad-checksum";
+export type Verdict = "trusted" | "review" | "new" | "lookalike" | "invalid" | "bad-checksum";
 
 export interface AssessContext extends LookalikeOptions {
   /** Addresses the owner has really sent to, from `deriveTrustedRecipients`. */
@@ -44,7 +47,11 @@ export interface Assessment {
   checksum?: ChecksumState;
   /** Why, in the order the checks ran. Always at least one line. */
   reasons: string[];
-  /** The trusted addresses this candidate imitates. Empty unless the verdict is `"lookalike"`. */
+  /**
+   * The known addresses this candidate resembles. For `"lookalike"` these are the addresses it
+   * imitates; for `"review"` they are the other addresses the owner has really paid that share
+   * both ends with it. Otherwise empty, apart from `peers` matches that did not change the verdict.
+   */
   evidence: LookalikeMatch[];
   /** Provenance of `trusted`, when the caller supplied it. */
   source?: SourceInfo;
@@ -57,16 +64,25 @@ export interface Assessment {
  * the verdict:
  *
  * 1. not an address at all -> `"invalid"`.
- * 2. an exact trusted match whose casing is not corrupt -> `"trusted"`.
+ * 2. an exact trusted match whose casing is not corrupt -> `"trusted"`, or `"review"` when
+ *    another trusted address shares both ends with it.
  * 3. imitates a trusted address -> `"lookalike"`.
  * 4. casing contradicts the EIP-55 checksum -> `"bad-checksum"`.
  * 5. otherwise -> `"new"`.
  *
  * Two orderings here are deliberate. An exact match outranks look-alike-ness, because the owner
- * having really sent here says everything and the existence of some other imitating address says
- * nothing about this one -- flagging a known-good recipient is how a tool teaches people to
- * ignore it. But a look-alike outranks a checksum complaint, because both mean "do not send" and
- * reporting the casing would hide the dangerous half.
+ * having really sent here is strong evidence -- but not proof, and step 2 says where it stops.
+ * A look-alike outranks a checksum complaint, because both mean "do not send" and reporting the
+ * casing would hide the dangerous half.
+ *
+ * Why two trusted addresses that share both ends are sent to review. Trust is "the owner really
+ * paid this", not "this was the intended payee". An owner who once copied a poisoned address from
+ * their wallet history, before this guard was in the pipeline, has that address in their trusted
+ * set from then on, and it passes as an exact match forever. Two trusted addresses sharing both
+ * ends is exactly what that earlier success would look like, so both are held for a person
+ * instead of one being cleared. It costs one review, and only for histories that already contain
+ * such a pair. Only history counts: a resemblance to another row of the same batch (`peers`) is
+ * not evidence about the owner's past, so it never triggers this.
  *
  * The exception in step 2 is why `trusted` is conditional: correct bytes in a spelling no tool
  * would emit still means the input was edited by hand, and that is cheap to stop for.
@@ -107,6 +123,7 @@ export function assessRecipient(candidate: string, ctx: AssessContext): Assessme
     ...findLookalikes(normalized, ctx.peers ?? [], window, "batch"),
   ];
   const trusted = ctx.trusted.some((entry) => normalizeAddress(entry) === normalized);
+  const fromHistory = evidence.filter((match) => match.knownFrom === "history").length;
 
   const base = {
     candidate,
@@ -121,16 +138,18 @@ export function assessRecipient(candidate: string, ctx: AssessContext): Assessme
   // worth stopping for even though these particular bytes are safe.
   if (trusted && checksum !== "mismatch") {
     reasons.push("the owner has really sent to this address before");
-    if (evidence.length > 0) {
+    if (fromHistory > 0) {
       reasons.push(
-        `${evidence.length} other address(es) share both ends with it, which does not make this one suspect`,
+        `${fromHistory} other address(es) the owner has also really paid share both ends with it. ` +
+          "One of them may be a look-alike that was paid by mistake before this check existed, so a person " +
+          "must confirm which is the intended recipient",
       );
+      return { ...base, verdict: "review", reasons };
     }
     return { ...base, verdict: "trusted", reasons };
   }
   if (evidence.length > 0) {
     const first = evidence[0] as LookalikeMatch;
-    const fromHistory = evidence.filter((match) => match.knownFrom === "history").length;
     const fromBatch = evidence.length - fromHistory;
     const parts: string[] = [];
     if (fromHistory > 0) parts.push(`${fromHistory} recipient(s) the owner has really paid`);
