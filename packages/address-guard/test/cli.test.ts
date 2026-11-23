@@ -2,9 +2,13 @@ import { describe, expect, it } from "vitest";
 import { EXIT, ENDPOINT_VARIABLE, runAddressGuard, USAGE, type CliIo } from "../src/cli/address-guard.js";
 import { toChecksum } from "../src/checksum.js";
 import type { Address } from "../src/hex.js";
-import { GENUINE, IMITATOR, mockSource, OWNER, poisonedHistory, STRANGER, TOKEN } from "./fixtures.js";
+import { genuineSend, GENUINE, IMITATOR, mockSource, OWNER, poisonedHistory, STRANGER, TOKEN } from "./fixtures.js";
 
 const RPC = "https://rpc.example/secret-key";
+
+/** The owner really paid both addresses: what a poisoning that already worked looks like. */
+const pairedHistory = [genuineSend(GENUINE), genuineSend(IMITATOR)];
+const pairedSource = { source: () => mockSource(pairedHistory) };
 
 interface Run {
   code: number;
@@ -129,6 +133,17 @@ describe("check", () => {
     expect(out.join("\n")).toContain(`imitates ${toChecksum(GENUINE)}`);
   });
 
+  it("exits 15 and asks for a review when two trusted addresses look alike", async () => {
+    for (const address of [GENUINE, IMITATOR]) {
+      const { code, out } = await run(
+        ["check", address, "--owner", OWNER, "--rpc", RPC, "--token", TOKEN],
+        pairedSource,
+      );
+      expect(code).toBe(EXIT.REVIEW);
+      expect(out[0]).toContain("REVIEW");
+    }
+  });
+
   it("exits 30 for a malformed candidate", async () => {
     const { code } = await run(["check", "0xnope", "--owner", OWNER, "--rpc", RPC, "--token", TOKEN]);
     expect(code).toBe(EXIT.INVALID);
@@ -227,6 +242,15 @@ describe("payouts", () => {
     });
     expect(code).toBe(EXIT.LOOKALIKE);
     expect(out.join("\n")).toContain("LOOKALIKE");
+  });
+
+  it("exits 15 when a recipient is one of a trusted look-alike pair", async () => {
+    const { code, out } = await run(
+      ["payouts", file, "--owner", OWNER, "--rpc", RPC, "--token", TOKEN],
+      { ...pairedSource, readFile: readFile(`${GENUINE},10\n`) },
+    );
+    expect(code).toBe(EXIT.REVIEW);
+    expect(out.join("\n")).toContain("REVIEW");
   });
 
   /** A row imitating another row is the same attack carried out inside the batch. */

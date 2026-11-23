@@ -6,6 +6,25 @@ All notable changes to `@globalmpc/address-guard` are recorded here. The format 
 
 ## [Unreleased]
 
+### Added
+
+- **Review for trusted look-alike pairs.** New `review` verdict, exit code 15: stronger protection
+  for addresses you already trust. When two addresses you have really paid share both ends,
+  `assessRecipient` now holds both for a quick manual check instead of clearing them, in case an
+  earlier look-alike was paid before the guard was in use. Each address gets a reason explaining
+  the pair. Only your own history counts: a resemblance to another row of a payout file (`peers`)
+  does not trigger it, and the corrupt-casing path is unchanged. `scan` reports such a pair the
+  same way (exit 15), and the text output says "shares both ends with" rather than "imitates" for
+  a review result. Scripts that call the CLI: a check that only stops at exit code 20 or above
+  will let a `review` result through, so stop at 15 or above to hold these pairs.
+
+### Changed
+
+- The reason shown for a trusted address that has a trusted look-alike now explains why a manual
+  check is needed.
+- `Verdict` gains `"review"`. Code that switches over every verdict, or maps verdicts to exit
+  codes, should handle it.
+
 ## [0.1.1] - 2026-10-31
 
 ### Changed

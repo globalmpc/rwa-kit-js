@@ -32,16 +32,19 @@ describe("the poisoned history fixture", () => {
 
   /**
    * What trusting the log's `from` would cost: the forgery and the zero-value send both name the
-   * imitator as an outgoing counterparty, so a naive derivation enrols it. From then on the
-   * imitator is an exact trusted match and every later check waves it through -- no warning, no
-   * evidence, exit code 0. This is the whole reason `deriveTrustedRecipients` checks `txFrom`.
+   * imitator as an outgoing counterparty, so a naive derivation enrols it, and it becomes an exact
+   * trusted match. Trusted pairs that share both ends are now held for review, so the imitator
+   * no longer passes silently -- but it still sits in the trusted set next to the genuine address,
+   * and a person has to untangle which is which. The real rule keeps it out of the set entirely,
+   * which is why `deriveTrustedRecipients` checks `txFrom`.
    */
-  it("would wave the imitator through as trusted if the log's from were believed", () => {
+  it("holds the imitator for review, not a clean pass, if the log's from were believed", () => {
     const naive = poisonedHistory
       .filter((event) => event.direction === "out")
       .map((event) => event.counterparty);
     expect(naive).toContain(IMITATOR);
-    expect(assessRecipient(IMITATOR, { trusted: naive }).verdict).toBe("trusted");
+    expect(assessRecipient(IMITATOR, { trusted: naive }).verdict).toBe("review");
+    expect(assessRecipient(GENUINE, { trusted: naive }).verdict).toBe("review");
 
     // With the real rule, the imitator never enters the set and is caught.
     const trusted = deriveTrustedRecipients(poisonedHistory);

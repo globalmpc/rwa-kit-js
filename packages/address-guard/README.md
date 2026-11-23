@@ -31,6 +31,11 @@ history and nothing else. The address may still belong to a counterparty who has
 compromised, a service that has changed hands, or a contract that was upgraded. This package
 decides where **not** to send; it never decides that sending is a good idea.
 
+It also does not mean "the address you meant". If you once copied a poisoned address from your
+wallet history before this guard was in place, that address is in your trusted set from then on.
+So when two addresses you have really paid share their first and last characters, neither is
+cleared: both get the `review` verdict until a person checks which one is the intended recipient.
+
 ## Example
 
 ```ts
@@ -76,7 +81,7 @@ address-guard checksum 0x…address
 address-guard payouts recipients.csv --owner 0x…owner --rpc "$RPC_URL" --token 0x…token --json
 ```
 
-Exit codes: **0** trusted, **10** new, **20** look-alike, **30** invalid or bad checksum, **1**
+Exit codes: **0** trusted, **10** new, **15** review, **20** look-alike, **30** invalid or bad checksum, **1**
 usage error, **2** the history could not be read. A batch reports its worst verdict, so one
 look-alike among clean rows exits 20.
 
@@ -168,13 +173,24 @@ A floor of `0n` is clamped to `1n`: a zero value never counts, whatever `minValu
 
 ### Verdict precedence
 
-`invalid` → `trusted` (exact match, casing not corrupt) → `lookalike` → `bad-checksum` → `new`.
+`invalid` → `trusted` or `review` (exact match, casing not corrupt) → `lookalike` → `bad-checksum` → `new`.
 
-An exact trusted match outranks look-alike-ness, because the fact that some *other* address
-imitates this one says nothing about this one, and flagging a recipient you really pay is how a
-tool gets ignored. A look-alike outranks a checksum complaint, because both mean "do not send" and
+An exact trusted match is strong evidence, so it outranks look-alike-ness, with one exception: when
+another address you have really paid shares both ends with it, the verdict is `review`, not
+`trusted`. Two such addresses are what a poisoning that already worked looks like, and nothing in
+the history says which one you meant. Both addresses get `review`, each with a reason naming the
+pair. It costs one manual check, and only for histories that already contain such a pair.
+
+Only your own history counts here. A resemblance to another row of the same payout file (`peers`)
+says nothing about your past, so it never turns `trusted` into `review`. A trusted address whose
+casing is corrupt still follows the checksum path below, as before.
+
+A look-alike outranks a checksum complaint, because both mean "do not send" and
 reporting the casing would hide the dangerous half. Every check that fired is still listed in
 `reasons`.
+
+`review` is not remembered: the guard keeps no list of pairs a person has already confirmed, so
+the same pair is flagged each time.
 
 ## Limitations
 
