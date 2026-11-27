@@ -185,7 +185,9 @@ export async function collectLogs(options: WalkOptions): Promise<{ logs: Log[]; 
     if (step.done) {
       return { logs, summary: step.value };
     }
-    logs.push(...step.value.logs);
+    for (const log of step.value.logs) {
+      logs.push(log);
+    }
   }
 }
 

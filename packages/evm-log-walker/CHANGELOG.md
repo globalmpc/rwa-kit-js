@@ -6,6 +6,11 @@ All notable changes to `@globalmpc/evm-log-walker` are recorded here. The format
 
 ## [Unreleased]
 
+### Fixed
+
+- `collectLogs` no longer exceeds the JavaScript function argument limit when an endpoint
+  returns a large accepted batch of logs.
+
 ## [0.1.1] - 2026-10-31
 
 ### Changed
