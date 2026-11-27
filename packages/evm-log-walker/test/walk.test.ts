@@ -54,6 +54,28 @@ describe("walkLogs", () => {
     expect(summary.calls).toBe(summary.batches + summary.rejectedCalls);
   });
 
+  it("collects a large accepted batch without exceeding the function argument limit", async () => {
+    const batchSize = 150_000;
+    const chain = createFakeChain({
+      head: 2,
+      logs: [
+        { blockNumber: 0 },
+        ...Array.from({ length: batchSize }, () => ({ blockNumber: 1 })),
+        { blockNumber: 2 },
+      ],
+    });
+    const rpc = createRpc({ urls: "http://a", fetch: chain.fetch });
+
+    const { logs, summary } = await collectLogs({ rpc, fromBlock: 0, toBlock: 2, chunkSize: 1 });
+
+    expect(logs).toHaveLength(batchSize + 2);
+    expect(logs[0]!.blockNumber).toBe(0);
+    expect(logs[1]!.blockNumber).toBe(1);
+    expect(logs.at(-1)!.blockNumber).toBe(2);
+    expect(logs.every((log, index) => log.logIndex === index)).toBe(true);
+    expect(summary).toMatchObject({ batches: 3, calls: 3, rejectedCalls: 0, logs: batchSize + 2 });
+  });
+
   it("shrinks the chunk when the endpoint caps the result count", async () => {
     const chain = createFakeChain({ head: 200, logs: [1, 2, 3, 4, 5].map((blockNumber) => ({ blockNumber })), maxLogResults: 2 });
     const rpc = createRpc({ urls: "http://a", fetch: chain.fetch });
